@@ -1,48 +1,65 @@
-// NOTE: Do NOT add setup() or draw() in this file
-// setup() and draw() live in main.js
-// This file only defines:
-// 1) drawWin() → what the win screen looks like
-// 2) input handlers → how the player returns to the start screen
-//
-// This file is intentionally very similar to lose.js.
-// The goal is to show that win/lose screens are often
-// simple “end states” with minimal logic.
-
-// ------------------------------------------------------------
-// Main draw function for win screen
-// ------------------------------------------------------------
-// drawWin() is called from main.js
-// only when currentScreen === "win"
 function drawWin() {
-  // Green-tinted background to communicate success
-  background(200, 255, 200);
+  const giveBtn = {
+    x: width / 2,
+    y: 600,
+    w: 240,
+    h: 80,
+    label: "GIVE",
+  };
 
-  fill(0);
-  textAlign(CENTER, CENTER);
+  const repickBtn = {
+    x: width / 2,
+    y: 700,
+    w: 240,
+    h: 80,
+    label: "REPICK",
+  };
 
-  // Main success message
-  textSize(40);
-  text("You Win!", width / 2, 300);
+  drawButton(giveBtn);
+  drawButton(repickBtn);
 
-  // Instruction text
-  textSize(20);
-  text("Click or press R to return to Start.", width / 2, 360);
+  const over = isHover(giveBtn) || isHover(repickBtn);
+  cursor(over ? HAND : ARROW);
 }
 
-// ------------------------------------------------------------
-// Mouse input for win screen
-// ------------------------------------------------------------
-// Any mouse click returns the player to the start screen
 function winMousePressed() {
   currentScreen = "start";
+  const giveBtn = { x: width / 2, y: 600, w: 240, h: 80 };
+  const repickBtn = { x: width / 2, y: 700, w: 240, h: 80 };
+
+  if (isHover(giveBtn)) {
+    count = count + 1;
+    currentScreen = "giveF";
+  } else if (isHover(repickBtn)) {
+    currentScreen = "game";
+  }
 }
 
-// ------------------------------------------------------------
-// Keyboard input for win screen
-// ------------------------------------------------------------
-// R is commonly used for “restart” in games
-function winKeyPressed() {
-  if (key === "r" || key === "R") {
-    currentScreen = "start";
+function drawButton({ x, y, w, h, label }) {
+  rectMode(CENTER);
+
+  const hover = isHover({ x, y, w, h });
+
+  noStroke();
+
+  if (hover) {
+    fill("pink");
+
+    drawingContext.shadowBlur = 20;
+    drawingContext.shadowColor = color(255, 180, 120);
+  } else {
+    fill("gold");
+
+    drawingContext.shadowBlur = 8;
+    drawingContext.shadowColor = color(220, 220, 220);
   }
+
+  rect(x, y, w, h, 14);
+
+  drawingContext.shadowBlur = 0;
+
+  fill(40, 60, 70);
+  textSize(28);
+  textAlign(CENTER, CENTER);
+  text(label, x, y);
 }
